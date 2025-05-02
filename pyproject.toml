@@ -1,0 +1,30 @@
+[project]
+name = "widget-idget"
+version = "0.1.0"
+description = "Widget for this idget"
+authors = [
+    {name = "Frank Cao",email = "franktcao@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.9,<3.14"
+dependencies = [
+    "ipywidgets (>=8.1.5,<9.0.0)",
+    "ipykernel (>=6.29.5,<7.0.0)",
+    "nba-api (>=1.8.0,<2.0.0)",
+    "pandas (>=2.2.3,<3.0.0)",
+    "dotenv (>=0.9.9,<0.10.0)",
+    "yarl (>=1.19.0,<2.0.0)",
+    "pyqt6 (==6.4.2.0)",
+    "pyqt6-plugins (>=6.4.2.2.3,<7.0.0.0.0)",
+    "pyqt6-tools (>=6.4.2.3.3,<7.0.0.0.0)",
+    "designer (>=0.6.6,<0.7.0)",
+    "pyside6 (>=6.9.0,<7.0.0)",
+    "pydantic (>=2.11.3,<3.0.0)",
+    "jupyter (>=1.1.1,<2.0.0)",
+    "pandera (>=0.23.1,<0.24.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

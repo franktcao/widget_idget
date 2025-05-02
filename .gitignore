@@ -1,0 +1,15 @@
+# Python virtual environment
+.venv/
+
+# Sensitive files
+.env
+
+# Notebook contents
+notebooks/**
+
+# Generated files
+__pycache__/
+*.pyc
+
+# Keep directory structuer
+!notebooks/.gitignore
