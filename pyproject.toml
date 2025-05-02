@@ -6,7 +6,7 @@ authors = [
     {name = "Frank Cao",email = "franktcao@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.9,<3.14"
+requires-python = ">=3.9,<3.9.7 || >3.9.7,<3.14" # Needed since streamlit doesn't support 3.9.7 for some reason?
 dependencies = [
     "ipywidgets (>=8.1.5,<9.0.0)",
     "ipykernel (>=6.29.5,<7.0.0)",
@@ -21,7 +21,8 @@ dependencies = [
     "pyside6 (>=6.9.0,<7.0.0)",
     "pydantic (>=2.11.3,<3.0.0)",
     "jupyter (>=1.1.1,<2.0.0)",
-    "pandera (>=0.23.1,<0.24.0)"
+    "pandera (>=0.23.1,<0.24.0)",
+    "streamlit (>=1.45.0,<2.0.0)"
 ]
 
 

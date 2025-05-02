@@ -3,7 +3,7 @@ from typing import Optional
 import pandas as pd
 from pydantic import BaseModel
 
-from .sportsdataio.games import Game as SdiGame
+from .sportsdataio.models.games import Game as SdiGame
 
 
 class Team(BaseModel):
@@ -19,7 +19,7 @@ class Team(BaseModel):
     ties: Optional[int] = 0
     logo_url: Optional[str] = None
     division: Optional[str]= None
-    sbi_team_id: Optional[int] = None
+    sdi_team_id: Optional[int] = None
 
     @property
     def win_ratio(self) -> float: 
@@ -38,7 +38,7 @@ class Team(BaseModel):
         name = schema.home
         display_city = schema.home
         display_name = schema.home
-        sbi_team_id = schema.home_id
+        sdi_team_id = schema.home_id
         
         # Change values if the team is away
         if is_away:
@@ -46,7 +46,7 @@ class Team(BaseModel):
             name = schema.away
             display_city = schema.away
             display_name = schema.away
-            sbi_team_id = schema.away_id
+            sdi_team_id = schema.away_id
         
         # TODO: Figure out where to get these fields
         conference = None
@@ -69,7 +69,7 @@ class Team(BaseModel):
             score = score,
             ties = ties,
             logo_url = logo_url,
-            sbi_team_id = sbi_team_id,
+            sdi_team_id = sdi_team_id,
         )
 
 class Card(BaseModel):
