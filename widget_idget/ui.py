@@ -3,6 +3,8 @@ from typing import Optional
 import pandas as pd
 from pydantic import BaseModel
 
+from widget_idget.sportsdataio.models.series_info import SeriesInfo
+
 from .sportsdataio.models.games import Game as SdiGame
 
 
@@ -78,12 +80,15 @@ class Card(BaseModel):
     date: Optional[dt.date]
     time: Optional[dt.time]
     channel: Optional[str]
+    series_info: Optional[SeriesInfo]
+
 
     @classmethod
     def from_sportsdataio(cls, sr: pd.Series) -> "Card":
         schema = SdiGame(**sr)
         away = Team.from_sportsdataio(sr, is_away = True)
         home = Team.from_sportsdataio(sr, is_away = False)
+        series_info = SeriesInfo(**sr["SeriesInfo"])
         game_datetime = schema.game_datetime
 
         return cls(
@@ -92,4 +97,5 @@ class Card(BaseModel):
             date = None if game_datetime is None else game_datetime.date(),
             time = None if game_datetime is None else game_datetime.time(),
             channel = schema.channel,
+            series_info=series_info
         )

@@ -34,13 +34,11 @@ def get_data(today: dt.datetime) -> pd.DataFrame:
 
 @st.cache_data
 def get_teams_data() -> pd.DataFrame:
-    schema = SportsDataIO 
-    # TODO: Improve how to determine season year and if it's the postseason
-    # st.write(year, type(year))
     records = get_teams()
 
     df = (
         pd.DataFrame.from_records(records)
+        .set_index("TeamID")
     )
 
     return df
@@ -54,48 +52,105 @@ def get_games_by_date(df: pd.DataFrame, date: dt.date = None) -> pd.DataFrame:
         lambda x: x[x[schema.Day].astype("datetime64[s]").dt.date == date]
     )
 
+def display_card(card: Card) -> None:
+    cols = st.columns(
+        [col_width_pct, remaining_width_pct, col_width_pct], 
+        vertical_alignment="bottom",
+        border=True
+    )
+    display_card_side(card, cols)
+    display_card_separator(card, cols)
+    display_card_side(card, cols, is_away=False)
+
+def display_card_side(card: Card, cols: list[st.delta_generator], is_away: bool = True) -> None:
+    i_col = 0 if is_away else 2
+    side = card.away if is_away else card.home
+    team_id = side.sdi_team_id
+    team_info = teams.loc[team_id]
+    team_fmt = Team(**team_info)
+    team_name = side.name
+    nba_id = team_fmt.nba_team_id
+    # img_url = team_fmt.wiki_log_url
+    img_url = f"https://cdn.nba.com/logos/nba/{nba_id}/primary/L/logo.svg"
+    series_record = (
+        f"{card.series_info.away_wins}-{card.series_info.home_wins}"
+        if is_away 
+        else f"{card.series_info.home_wins}-{card.series_info.away_wins}"
+    )
+    caption = f"""{team_name}\n\n{series_record}"""
+    with cols[i_col]:
+        st.image(img_url, caption=caption, width=100, use_container_width=True)
+
+def display_card_separator(card: Card, cols: list[st.delta_generator]) -> None:
+    today = dt.date.today()
+    day_name = today.strftime("%A")
+    date = card.date
+    date = f"Today, {day_name}" if date == today else f"{date.strftime('%A %b %d')}"
+    channel = card.channel if card.channel else "*(TBD...)*"
+    time_zone = "ET"
+    with cols[1]:
+        st.write("### @")
+        st.write(f'**{date}** \n\non **{channel}** At **{card.time.strftime("%I:%M %p")} {time_zone}**')
+        st.write(f'Best of **{card.series_info.best_of}**')
+
+# Remove top margin
+st.markdown("""
+<style>
+header.stAppHeader {
+    background-color: transparent;
+}
+section.stMain .block-container {
+    padding-top: 0rem;
+    z-index: 1;
+}
+</style>""", unsafe_allow_html=True)
 st.title("NBA Games")
 today = dt.date.today()
 all_games = get_data(today)
 
 teams = get_teams_data()
-# st.write(teams)
 
 todays_games = get_games_by_date(all_games)
 
 # st.write(todays_games)
-active_games = todays_games.pipe(lambda x: x[x["Status"] == "Scheduled"])
+scheduled_games = (
+    todays_games
+    .pipe(lambda x: x[x["Status"] == "Scheduled"])
+    .sort_values("DateTime")
+    # .merge(teams, left_on="AwayTeamID", right_on="TeamID", how="left", suffixes=["", "_away"])
+    # .merge(teams, left_on="HomeTeamID", right_on="TeamID", how="left", suffixes=["", "_home"])
+)
 
 # st.write(active_games)
 
-# TODO: Get SeriesInfo for series wins/losses
-# TODO: Scrape NBA logos from : https://www.nba.com/teams
-# TODO: Look at SDI's Team Profile for team names and logos
-#   Download all logos locally OR download them in cache
-# TODO: Use team info from Teams table
+# TODO: Merge `teams` onto `games`
 
+st.write("# Today's Games")
 col_width_pct = 35
 remaining_width_pct = 100 - 2 * col_width_pct
-cards = [Card.from_sportsdataio(game) for _, game in active_games.iterrows()]
+cards = [Card.from_sportsdataio(game) for _, game in scheduled_games.iterrows()]
+day_name = today.strftime("%A %B %d")
+st.write(f"#### {day_name}")
 for card in cards:
-    cols = st.columns(
-        [col_width_pct, remaining_width_pct, col_width_pct], 
-        vertical_alignment="center",
-        border=True
+    display_card(card)
+
+st.divider()
+
+st.write("# Upcoming Games")
+for i_day in range(1, 3):
+    date = (dt.datetime.now() + dt.timedelta(days=i_day)).date()
+    # st.write(f"## {date.weekday()}, {date}")
+    day_name = date.strftime("%A")
+    # st.write(f"#### {day_name} {date}")
+    day_name = date.strftime("%A %B %d")
+    st.write(f"#### {day_name}")
+    games = (
+        get_games_by_date(all_games, date=date)
+        .pipe(lambda x: x[x["Status"] != "NotNecessary"])
+        .sort_values("DateTime")
     )
-    with cols[0]:
-        team_id = card.away.sdi_team_id
-        team_info = teams.pipe(lambda x: x[x["TeamID"] == team_id]).iloc[0]
-        team_fmt = Team(**team_info)
-        st.image(team_fmt.wiki_log_url)
-        st.write(f"### {card.away.name}")
-    with cols[1]:
-        st.write("### @")
-        st.write(f'On **{card.channel}** At **{card.time.strftime("%I:%M %p")}**')
-    with cols[2]:
-        team_id = card.home.sdi_team_id
-        team_info = teams.pipe(lambda x: x[x["TeamID"] == team_id]).iloc[0]
-        team_fmt = Team(**team_info)
-        st.image(team_fmt.wiki_log_url)
-        st.write(f"### {card.home.name}")
+    
+    cards = [Card.from_sportsdataio(game) for _, game in games.iterrows()]
+    for card in cards:
+        display_card(card)
 
