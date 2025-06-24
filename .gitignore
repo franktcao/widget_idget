@@ -11,5 +11,8 @@ notebooks/**
 __pycache__/
 *.pyc
 
+# Scratch work
+scratch/
+
 # Keep directory structuer
 !notebooks/.gitignore
