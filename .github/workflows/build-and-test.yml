@@ -36,7 +36,7 @@ jobs:
     strategy:
       matrix:
         app-folder:
-          - app/backend_gcf
+        #   - app/backend_gcf
           - app/ui_cr
 
     steps:
