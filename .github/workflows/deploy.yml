@@ -13,9 +13,9 @@ permissions:
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  SVC_ACCOUNT: ${{ secrets.GCP_SVC_ACCOUNT }}
-  GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/${{ secrets.GCP_SVC_ACCOUNT }}.json
-  SVC_ACCOUNT_EMAIL: ${{ secrets.GCP_SVC_ACCOUNT }}@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com
+  SVC_ACCOUNT: ${{ secrets.GCP_GH_SVC_ACCOUNT }}
+  GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/${{ secrets.GCP_GH_SVC_ACCOUNT }}.json
+  SVC_ACCOUNT_EMAIL: ${{ secrets.GCP_GH_SVC_ACCOUNT }}@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com
   REGION: ${{ vars.GCP_REGION }}
 #   BACKEND_GCF: https://${{ vars.GCP_REGION }}-${{ secrets.GCP_PROJECT_ID }}.${{ vars.GCP_FUNCTION_URI_SUFFIX }}
   CR_UI_IMAGE_NAME: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/widget-idget-prod/widget-idget:${{ github.sha }} 
