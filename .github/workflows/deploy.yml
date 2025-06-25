@@ -22,29 +22,29 @@ env:
   BUILD_LOGS_BUCKET: gs://${{ secrets.GCP_PROJECT_ID }}-gcloud-logs
   
 jobs:
-  deploy_backend_gcf: # Only deploy if build_and_test was successful on master
-    if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') || github.event_name == 'workflow_dispatch' }} && github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
+#   deploy_backend_gcf: # Only deploy if build_and_test was successful on master
+#     if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') || github.event_name == 'workflow_dispatch' }} && github.ref == 'refs/heads/master'
+#     runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v4
+#     steps:
+#     - uses: actions/checkout@v4
 
-    - name: Check env vars
-      run: |
-        echo "Environment variables configured:"
-        echo PROJECT_ID="$PROJECT_ID"
-        echo REGION="$REGION"
-        echo SVC_ACCOUNT="$SVC_ACCOUNT"
-        echo SVC_ACCOUNT_EMAIL="$SVC_ACCOUNT_EMAIL"
-    # echo BACKEND_GCF="$BACKEND_GCF"      
+#     - name: Check env vars
+#       run: |
+#         echo "Environment variables configured:"
+#         echo PROJECT_ID="$PROJECT_ID"
+#         echo REGION="$REGION"
+#         echo SVC_ACCOUNT="$SVC_ACCOUNT"
+#         echo SVC_ACCOUNT_EMAIL="$SVC_ACCOUNT_EMAIL"
+#     # echo BACKEND_GCF="$BACKEND_GCF"      
 
-    # Authenticate with Google Cloud
-    - name: Authenticate to Google Cloud
-      run: |
-        echo "${{ secrets.GCP_SVC_ACCOUNT_CREDS }}" | base64 --decode > $GOOGLE_APPLICATION_CREDENTIALS
-        gcloud auth activate-service-account $SVC_ACCOUNT_EMAIL --key-file=$GOOGLE_APPLICATION_CREDENTIALS
-        gcloud config set project $PROJECT_ID
-        gcloud config set functions/region $REGION
+#     # Authenticate with Google Cloud
+#     - name: Authenticate to Google Cloud
+#       run: |
+#         echo "${{ secrets.GCP_SVC_ACCOUNT_CREDS }}" | base64 --decode > $GOOGLE_APPLICATION_CREDENTIALS
+#         gcloud auth activate-service-account $SVC_ACCOUNT_EMAIL --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+#         gcloud config set project $PROJECT_ID
+#         gcloud config set functions/region $REGION
 
     # # Deploy backend_gcf to Google Cloud Functions
     # - name: Deploy to Google Cloud Functions
